@@ -29,8 +29,7 @@ scipy==1.10.1
 seaborn>=0.11.2
 shap>=0.40.0
 sqlparse>=0.4.4
-tensorflow==2.10.0
-keras==2.10.0  # Use this without tensorflow-gpu
+tensorflow==2.15.0 
 termcolor>=2.3.0
 threadpoolctl>=3.1.0
 typing-extensions>=4.5.0
@@ -42,5 +41,5 @@ flask-restful>=0.3.9
 requests>=2.31.0
 mysql-connector-python>=8.0.33
 lime>=0.2.0.1
-python-3.10.13
+
 
