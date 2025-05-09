@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>AgroGuard</title>
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+
+  <!-- Favicons -->
+  <link href="{{ url_for('static', filename='img/sprout.png') }}" rel="icon">
+
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&family=Marcellus:wght@400&display=swap" rel="stylesheet">
+
+  <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='vendor/aos/aos.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='vendor/swiper/swiper-bundle.min.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='vendor/glightbox/css/glightbox.min.css') }}" rel="stylesheet">
+
+<!-- Bootstrap JS -->
+<script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+
+<!-- Main CSS File -->
+<link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/templatemo-style.css') }}" rel="stylesheet">
+
+
+</head>
+
+
+     <header id="header" class="header d-flex align-items-center position-relative">
+        <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+
+
+
+         <header class="navbar-container">
+    <nav id="navmenu" class="navmenu d-flex align-items-center">
+      <a href="index.html" class="logo d-flex align-items-center">
+            <img src="{{ url_for('static', filename='img/sprout.png') }}" rel="icon">
+          </a>
+      <h3 style="color: #ad7e3c">AgroGuard</h3>
+
+
+<ul class="nav-items" style="display: flex; position: absolute; left: 60%; list-style: none; margin: 0; padding: 0;">
+  <li style="margin-left: 15px;"><a href="{{ url_for('index') }}">Home</a></li>
+
+  <li style="margin-left: 15px;" class="dropdown">
+    <a href="#" class="dropbtn">Services</a>
+    <div class="dropdown-content">
+      <a href="{{ url_for('crop') }}">Crop Recommendation</a>
+      <a href="{{ url_for('fertilizer') }}">Fertilizer Recommendation</a>
+      <a href="{{ url_for('pesticide') }}">Pesticides Recommendation</a>
+    </div>
+  </li>
+  <li style="margin-left: 15px;"><a href="#footer">Contact</a></li>
+  {% if session.get('user_id') %}
+  <li style="margin-left: 15px;"><a href="{{ url_for('logout') }}">Logout</a></li>
+{% else %}
+  <li style="margin-left: 15px;"><a href="{{ url_for('sign_up') }}">Sign Up</a></li>
+ <!-- <li style="margin-left: 15px;"><a href="{{ url_for('sign_in') }}">Sign In</a></li>-->
+{% endif %}
+</ul>
+        <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+    </nav>
+</header>
+             </div>
+    </header>
+<body>
+
+<section class="background" style="background-image: url('{{ url_for('static', filename='img/cropback1.jpg') }}');">
+  <div >
+  <!-- Heading on top of form container -->
+  <h2 class="form-heading" style="text-align: center">
+    <b>Discover the best crop to cultivate on your farm</b>
+  </h2>
+  <div class="form-container">
+    <form method="POST" action="/crop_prediction">
+      <div class="form-group">
+        <label for="Nitrogen"><b>Nitrogen (ratio)</b></label>
+        <input type="number" class="form-control" id="Nitrogen" max="300" min="0" name="nitrogen" placeholder="Enter the value (example:50)" required />
+      </div>
+      <div class="form-group">
+        <label for="Phosphorous"><b>Phosphorous (ratio)</b></label>
+        <input type="number" class="form-control" id="Phosphorous" max="300" min="0" name="phosphorous" placeholder="Enter the value (example:50)" required />
+      </div>
+      <div class="form-group">
+        <label for="Potassium"><b>Potassium (ratio)</b></label>
+        <input type="number" class="form-control" id="Potassium" name="potassium" max="300" min="0" placeholder="Enter the value (example:50)" required />
+      </div>
+      <div class="form-group">
+        <label for="ph"><b>pH Level</b></label>
+        <input type="number" class="form-control" id="ph" name="ph" max="14" min="0" step=".01"placeholder="Enter the value from 0-14" required />
+      </div>
+      <input type="hidden" id="latitude" name="latitude">
+      <input type="hidden" id="longitude" name="longitude">
+      <div class="d-flex justify-content-center">
+        <button type="submit" class="submit-button">Predict</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+</section>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+      const latitudeInput = document.getElementById("latitude");
+      const longitudeInput = document.getElementById("longitude");
+      const locationSpan = document.getElementById("coords");
+      const temperatureSpan = document.getElementById("temperature");
+
+      if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(async function(position) {
+              const lat = position.coords.latitude;
+              const lon = position.coords.longitude;
+              latitudeInput.value = lat;
+              longitudeInput.value = lon;
+
+              try {
+                  const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&addressdetails=1`);
+                  const data = await response.json();
+                  // Ensure proper order of location details
+                  const area = data.address.village || data.address.suburb || data.address.hamlet || '';
+                  const city = data.address.city || data.address.town || data.address.county || '';
+                  const district = data.address.district || '';
+                  const state = data.address.state || '';
+                  locationSpan.innerText = `${area}, ${city}, ${state}`;
+              } catch (error) {
+                  console.error("Error fetching location details:", error);
+              }
+
+              try {
+                  const weatherResponse = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
+                  const weatherData = await weatherResponse.json();
+                  temperatureSpan.innerText = `${weatherData.current_weather.temperature}°C`;
+              } catch (error) {
+                  console.error("Error fetching weather data:", error);
+              }
+          }, function(error) {
+              console.error("Error fetching geolocation:", error.message);
+              alert("Error fetching your location. Please enable location access.");
+          });
+      } else {
+          alert("Geolocation is not supported by your browser.");
+      }
+  });
+
+</script>
+
+
+</body>
+
+</html>

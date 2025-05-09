@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AgroGuard</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Recursive:wght@500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/font-awesome.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/templatemo-style.css') }}" rel="stylesheet">
+  <link rel="shortcut icon" href="{{ url_for('static', filename='img/agrologo.ico') }}" type="image/x-icon" />
+  <script type="text/JavaScript" src="{{ url_for('static', filename='js/cities.js') }}"></script>
+
+  <style>
+    body {
+      font-family: 'Open Sans', sans-serif;
+      margin: 0;
+      padding: 0;
+      height: 120vh;
+      background-image: url("{{ url_for('static', filename='img/backgroundimg.jpeg') }}");
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+
+    }
+
+    .tm-top-header {
+      width: 100%;
+      padding: 20px 0;
+      background-color: #31511e;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 999;
+    }
+    .scrollable-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 10px;
+    overflow-y: auto;
+    max-height: 90vh;
+    text-align: center;
+  }
+
+    .tm-top-header-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px;
+    }
+
+    .tm-logo-container h1 {
+      font-family: 'Damion', cursive;;
+      font-size: 36px;
+      margin: 0;
+      color: #fff;
+    }
+
+    .tm-nav {
+      list-style: none;
+      display: flex;
+      gap: 20px;
+    }
+
+    .tm-nav a {
+      text-decoration: none;
+      color: #fff;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+
+    .tm-nav a:hover {
+      color: #f4c542;
+    }
+
+    .main-content {
+      text-align: center;
+      max-width: 800px;
+      padding: 10px;
+      background-color: rgba(0, 0, 0, 0.6);
+      border-radius: 8px;
+      z-index: 1;
+    }
+
+    .main-content h1 {
+      font-size: 48px;
+      margin-bottom: 20px;
+    }
+
+    .main-content p {
+      font-size: 18px;
+    }
+
+    .mobile-menu-icon i {
+      color: white;
+      font-size: 30px;
+      cursor: pointer;
+    }
+  </style>
+
+</head>
+
+<body>
+  <div class="tm-top-header">
+    <div class="container">
+      <div class="row">
+        <div class="tm-top-header-inner">
+          <div class="tm-logo-container">
+            <h1 class="tm-site-name tm-handwriting-font" style="color: #c79c60">AgroGuard</h1>
+          </div>
+          <div class="mobile-menu-icon">
+            <i class="fa fa-bars"></i>
+          </div>
+          <nav class="tm-nav">
+            <ul>
+              {% block nav %}
+              <li><a href="#home" class="tm-handwriting-font">Home</a></li>
+              <li><a href="#about" class="tm-handwriting-font">About</a></li>
+              <li><a href="#services" class="tm-handwriting-font">Services</a></li>
+              <li><a href="#contact" class="tm-handwriting-font">Contact</a></li>
+              {% endblock %}
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  {% block body %} {% endblock %}
+
+  <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-1.11.2.min.js') }}"></script> <!-- jQuery -->
+  <script type="text/javascript" src="{{ url_for('static', filename='js/templatemo-script.js') }}"></script> <!-- Templatemo Script -->
+
+</body>
+
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>AgroGuard</title>
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+
+  <!-- Favicons -->
+  <link href="{{ url_for('static', filename='img/sprout.png') }}" rel="icon">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&family=Marcellus:wght@400&display=swap" rel="stylesheet">
+
+  <!-- Vendor CSS -->
+  <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='vendor/aos/aos.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='vendor/swiper/swiper-bundle.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='vendor/glightbox/css/glightbox.min.css') }}" rel="stylesheet">
+
+  <!-- Main CSS File -->
+  <link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/templatemo-style.css') }}" rel="stylesheet">
+
+  <!-- Custom CSS for Quality Assessment -->
+  <style>
+  .quality-assessment-section {
+    padding: 60px 0;
+    text-align: center;
+    color:white;
+    background-size: cover;
+background-position: center;
+background-repeat: no-repeat;
+  }
+
+  .quality-assessment-section h2 {
+    font-size: 1.8rem; /* Reduced font size */
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #f7d983;
+  }
+
+  .quality-assessment-section h3 {
+    font-size: 1.2rem; /* Reduced font size */
+    margin-bottom: 25px;
+    color: white;
+  }
+
+  /* Form layout for parallel buttons */
+  .assessment-form {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+
+  /* Styling for file input */
+  .quality-assessment-section input[type="file"] {
+    color: white;
+    font-size: 0.9rem;
+  }
+
+  /* Styling for the submit button */
+  .quality-assessment-section input[type="submit"] {
+    background-color: black; /* Dark background */
+    padding: 8px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    color: #dec362;
+    border: none;
+    font-size: 0.9rem;
+    height: 36px; /* Match height with file input */
+  }
+
+  #loading {
+    color: black;
+    font-size: 0.9rem;
+    margin-top: 10px;
+  }
+
+  .result-container {
+    margin-top: 25px;
+    text-align: center;
+  }
+
+  .result-container img {
+    width: 220px;
+    height: 220px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    object-fit: cover;
+  }
+
+  .result-container h3 {
+    color: white;
+    margin-top: 15px;
+    font-size: 1.1rem;
+  }
+
+  .grade-display {
+    background-color: #f7d983; /* Dark shade */
+    color: white;
+    padding: 8px 15px;
+    border-radius: 8px;
+    display: inline-block;
+    margin-top: 8px;
+  }
+
+  .grade-display h1 {
+    font-size: 1.6rem;
+    margin: 0;
+    padding: 0;
+    color: black;
+  }
+
+  /* Media query for mobile responsiveness */
+  @media (max-width: 768px) {
+    .assessment-form {
+      flex-direction: column;
+      gap: 10px;
+    }
+  }
+  </style>
+</head>
+
+<body>
+  <header id="header" class="header d-flex align-items-center position-relative">
+    <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+      <header class="navbar-container">
+        <nav id="navmenu" class="navmenu d-flex align-items-center">
+          <a href="index.html" class="logo d-flex align-items-center">
+            <img src="{{ url_for('static', filename='img/sprout.png') }}" rel="icon">
+          </a>
+          <h3 style="color: #ad7e3c">AgroGuard</h3>
+
+          <ul class="nav-items" style="display: flex; position: absolute; left: 60%; list-style: none; margin: 0; padding: 0;">
+  <li style="margin-left: 15px;"><a href="{{ url_for('index') }}">Home</a></li>
+  <li style="margin-left: 15px;"><a href="{{ url_for('about') }}">About Us</a></li>
+  <li style="margin-left: 15px;" class="dropdown">
+    <a href="#" class="dropbtn">Services</a>
+    <div class="dropdown-content">
+      <a href="{{ url_for('crop') }}">Crop Recommendation</a>
+      <a href="{{ url_for('fertilizer') }}">Fertilizer Recommendation</a>
+      <a href="{{ url_for('pesticide') }}">Pesticides Recommendation</a>
+    </div>
+  </li>
+  <li style="margin-left: 15px;"><a href="#footer">Contact</a></li>
+  <li style="margin-left: 15px;"><a href="{{ url_for('sign_in') }}">Sign In</a></li>
+</ul>
+
+          <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+        </nav>
+      </header>
+    </div>
+  </header>
+
+  <section class="quality-assessment-section" style="background-image: url('{{ url_for('static', filename='img/cropback1.jpg') }}');">
+    <h2>Fruit Quality Assessment</h2>
+    <h3>Please upload a clear image of the fruit, so that we can assess its quality accurately!</h3>
+
+    <form action="/quality_assesment" method="post" enctype="multipart/form-data" onsubmit="showLoading()" class="assessment-form">
+      <input type="file" name="image" class="upload" required>
+      <input type="submit" value="Assess Quality">
+    </form>
+
+    <!-- Loading text -->
+    <div id="loading" style="display: none;">
+      Processing your image... Please wait.
+    </div>
+
+    {% if image and prediction %}
+    <div class="result-container">
+      <h3><b>Fruit Image:</b></h3>
+      <img src="{{ url_for('static', filename=image) }}" alt="Uploaded Fruit">
+      <h3><b>Predicted Quality:</b></h3>
+      <div class="grade-display">
+        <h1>Grade {{ prediction }}</h1>
+      </div>
+    </div>
+    {% endif %}
+  </section>
+
+  <script>
+    function showLoading() {
+      document.getElementById("loading").style.display = "block";
+    }
+  </script>
+
+  <!-- Vendor JS -->
+  <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendor/aos/aos.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendor/swiper/swiper-bundle.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendor/glightbox/js/glightbox.min.js') }}"></script>
+
+  <!-- Main JS File -->
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+
+</html>

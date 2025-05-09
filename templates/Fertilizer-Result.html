@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>AgroGuard</title>
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+
+  <!-- Favicons -->
+  <link href="{{ url_for('static', filename='img/sprout.png') }}" rel="icon">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap CSS -->
+  <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='vendor/aos/aos.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='vendor/swiper/swiper-bundle.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='vendor/glightbox/css/glightbox.min.css') }}" rel="stylesheet">
+
+  <!-- Main CSS File -->
+  <link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/templatemo-style.css') }}" rel="stylesheet">
+
+  </head>
+
+
+     <header id="header" class="header d-flex align-items-center position-relative">
+        <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+
+
+
+         <header class="navbar-container">
+    <nav id="navmenu" class="navmenu d-flex align-items-center">
+      <a href="index.html" class="logo d-flex align-items-center">
+            <img src="{{ url_for('static', filename='img/sprout.png') }}" rel="icon">
+          </a>
+      <h3 style="color: #ad7e3c">AgroGuard</h3>
+
+
+      <ul class="nav-items" style="display: flex; position: absolute; left: 60%; list-style: none; margin: 0; padding: 0;">
+  <li style="margin-left: 15px;"><a href="{{ url_for('index') }}">Home</a></li>
+  <li style="margin-left: 15px;"><a href="{{ url_for('about') }}">About Us</a></li>
+  <li style="margin-left: 15px;" class="dropdown">
+    <a href="#" class="dropbtn">Services</a>
+    <div class="dropdown-content">
+      <a href="{{ url_for('crop') }}">Crop Recommendation</a>
+      <a href="{{ url_for('fertilizer') }}">Fertilizer Recommendation</a>
+      <a href="{{ url_for('pesticide') }}">Pesticides Recommendation</a>
+    </div>
+  </li>
+  <li style="margin-left: 15px;"><a href="#footer">Contact</a></li>
+  {% if session.get('user_id') %}
+            <li style="margin-left: 15px;"><a href="{{ url_for('logout') }}">Logout</a></li>
+          {% else %}
+            <li style="margin-left: 15px;"><a href="{{ url_for('sign_up') }}">Sign Up</a></li>
+           <!-- <li style="margin-left: 15px;"><a href="{{ url_for('sign_in') }}">Sign In</a></li>-->
+          {% endif %}
+</ul>
+
+        <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+    </nav>
+</header>
+             </div>
+    </header>
+  <style>
+
+
+    .background {
+  position: relative;
+  width: 100%;
+  height: 100vh; /* Full viewport height */
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+
+}
+
+.prediction-banner {
+  color: #f7d983;
+  padding: 40px 20px; /* Reduced padding */
+  border-radius: 10px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.4);
+  max-width: 800px; /* Reduced max-width */
+  width: 90%; /* Responsive width */
+  margin: 0 auto; /* Center horizontally */
+}
+
+.prediction-banner img {
+  position: relative;
+  z-index: 2;
+  border: 6px solid #fff;
+  max-width: 350px; /* Reduced max-width */
+  width: 100%; /* Responsive width */
+  height: auto; /* Maintain aspect ratio */
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.prediction-banner h1 {
+  font-size: 30px; /* Reduced font size */
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+
+.prediction-banner p {
+  font-size: 16px; /* Reduced font size */
+  margin-bottom: 20px;
+}
+
+
+  </style>
+
+
+<body>
+
+  <section  class="background" style="background-image: url('{{ url_for('static', filename='img/cropback1.jpg') }}');">
+    <div class="prediction-banner">
+      <h1 style="color: #f7d983;">You should use <span style="color:#2ed154;">{{ prediction }}</span> on your farm</h1>
+      <p>Based on environmental conditions, we recommend <b style="color:#2ed154;">{{ prediction }}</b> as the best crop for your farm.</p>
+      <img src="{{ url_for('static', filename=pred) }}" alt="{{ prediction }}" class="img-fluid rounded mt-3">
+    </div>
+
+    
+  </section>
+</body>
+</html>

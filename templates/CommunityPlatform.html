@@ -1,0 +1,208 @@
+{% extends "layoutcommunity.html" %}
+
+{% block body %}
+<h2 style="text-align: center; margin: 10px; color: white;"><b>Community Platform for Farmers</b></h2>
+
+<div class="community-messages-container" style="max-width: 600px; margin: auto; height: 400px; overflow-y: auto;" id="post-container">
+  {% if posts %}
+    {% for post in posts %}
+    <div style="background-color: #f4efef; padding: 15px; margin: 10px 0; border-radius: 10px;">
+      <p><strong>{{ post.name }}</strong> <span style="font-size: 12px; color: #555;">{{ post.timestamp }}</span></p>
+      <p>{{ post.message }}</p>
+
+      {% if post.media %}
+        <div style="text-align: center; margin-top: 10px;">
+          {% if post.media_type == 'image' %}
+          <img src="{{ url_for('uploaded_file', filename=post.media) }}" alt="Post Media" style="max-width: 100%; border-radius: 10px;" /> />
+          <p>Media Path: {{ post.media }}</p>
+
+          {% elif post.media_type == 'audio' %}
+            <audio controls style="max-width: 100%; border-radius: 10px;">
+              <source src="{{ post.media }}" type="audio/mpeg">
+              Your browser does not support the audio element.
+            </audio>
+          {% elif post.media_type == 'video' %}
+            <video controls style="max-width: 100%; border-radius: 10px;">
+              <source src="{{ post.media }}" type="video/mp4">
+              Your browser does not support the video element.
+            </video>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      <div class="post-reactions" style="margin-top: 10px; display: flex; gap: 10px; align-items: center;">
+        <button type="button" onclick="reactToPost({{ post.id }}, 'like')">👍 Like (<span id="like-count-{{ post.id }}">{{ post.reactions.get('like', 0) }}</span>)</button>
+        <button type="button" onclick="reactToPost({{ post.id }}, 'love')">❤️ Love (<span id="love-count-{{ post.id }}">{{ post.reactions.get('love', 0) }}</span>)</button>
+        <button type="button" onclick="reactToPost({{ post.id }}, 'haha')">😂 Haha (<span id="haha-count-{{ post.id }}">{{ post.reactions.get('haha', 0) }}</span>)</button>
+
+        <button onclick="toggleCommentSection({{ post.id }})" style="background-color: #f1f1f1; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">💬 Comment</button>
+      </div>
+
+      <!-- Comment Section -->
+      <div id="comment-section-{{ post.id }}" style="display: none; margin-top: 10px;">
+        <form id="comment-form-{{ post.id }}" method="post" action="/comment_on_post/{{ post.id }}" style="display: flex; gap: 10px; align-items: center;">
+          <input type="text" name="name" value="{{ username or 'Anonymous' }}" style="padding: 5px; width: 80px;" readonly />
+          <textarea name="comment" placeholder="Write a comment..." style="width: 200px; height: 30px; resize: none;" required></textarea>
+          <input type="hidden" name="parent_comment_id" value="{{ post.id }}">
+          <button type="submit" style="padding: 5px 10px; background-color: black; color: white; border: none; border-radius: 5px;">Post</button>
+        </form>
+
+        <div id="comment-container-{{ post.id }}" style="margin-top: 5px;">
+          {% for comment in post.comments %}
+          <div style="margin-top: 5px; background-color: #eee; padding: 5px; border-radius: 5px;">
+            <strong>{{ comment.name }}:</strong> {{ comment.text }}
+            <button onclick="replyToComment({{ comment.id }})" style="background-color: #f1f1f1; padding: 5px 10px; border-radius: 5px;">💬 Reply</button>
+
+            <!-- Reply form for this comment -->
+            <div id="reply-form-{{ comment.id }}" style="display: none;">
+              <form method="POST" action="/comment_on_post/{{ post.id }}">
+                <input type="hidden" name="parent_comment_id" value="{{ comment.id }}">
+                <input type="text" name="name" value="{{ username }}" readonly />
+                <textarea name="comment" placeholder="Write a reply..." required></textarea>
+                <button type="submit">Post Reply</button>
+              </form>
+            </div>
+
+            {% if comment.replies %}
+            <div style="margin-left: 20px;">
+              {% for reply in comment.replies %}
+              <div style="background-color: #f0f0f0; padding: 5px; border-radius: 5px;">
+                <strong>{{ reply.name }}:</strong> {{ reply.text }}
+              </div>
+              {% endfor %}
+            </div>
+            {% endif %}
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  {% endif %}
+</div>
+
+<!-- Post Creation Form -->
+<div class="form-container" style="max-width: 700px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0px 2px 5px rgba(0,0,0,0.2);">
+  <form id="post-form" method="POST" action="/communitymessage" enctype="multipart/form-data" style="display: flex; align-items: center; gap: 10px;">
+    <input type="text" id="name" name="name" value="{{ username }}" style="padding: 10px; width: 120px; color: black;" readonly />
+    <textarea id="message" name="message" placeholder="What's on your mind?" style="padding: 10px; width: 200px; height: 40px; resize: none; color: black;" required></textarea>
+    <label for="media" style="cursor: pointer; background-color: #f1f1f1; padding: 10px; border-radius: 5px; display: inline-block;">
+      <i class="fa fa-upload" style="font-size: 18px; color: #333;"></i> File
+    </label>
+    <input type="file" id="media" name="media" accept="*/*" style="display: none;" />
+    <button type="submit" style="background-color: black; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-size: 14px;">Post</button>
+  </form>
+</div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+<script>
+function toggleCommentSection(postId) {
+  const section = document.getElementById(`comment-section-${postId}`);
+  if (section) {
+    section.style.display = section.style.display === "none" ? "block" : "none";
+  }
+}
+
+function replyToComment(commentId) {
+  const form = document.getElementById(`reply-form-${commentId}`);
+  form.style.display = form.style.display === "none" ? "block" : "none";
+}
+
+function reactToPost(postId, reactionType) {
+  fetch(`/react_to_post/${postId}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: `reaction=${reactionType}`
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      document.getElementById(`like-count-${postId}`).textContent = data.reactions.like;
+      document.getElementById(`love-count-${postId}`).textContent = data.reactions.love;
+      document.getElementById(`haha-count-${postId}`).textContent = data.reactions.haha;
+    } else {
+      alert(data.message || "Error processing your request.");
+    }
+  })
+  .catch(error => console.error("Error:", error));
+}
+
+function postComment(postId) {
+  const form = document.getElementById(`comment-form-${postId}`);
+  const formData = new FormData(form);
+
+  fetch(`/comment_on_post/${postId}`, {
+    method: "POST",
+    body: new URLSearchParams(formData)
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      const commentContainer = document.getElementById(`comment-container-${postId}`);
+      const newComment = document.createElement('div');
+      newComment.style.cssText = "margin-top: 5px; background-color: #eee; padding: 5px; border-radius: 5px;";
+      newComment.innerHTML = `<strong>${data.comment.name}:</strong> ${data.comment.text}`;
+      commentContainer.appendChild(newComment);
+      form.reset();
+    } else {
+      alert(data.message || "Error posting your comment.");
+    }
+  })
+  .catch(error => console.error("Error:", error));
+}
+
+document.getElementById("post-form").addEventListener("submit", function(event) {
+  event.preventDefault();
+  const formData = new FormData(this);
+
+  fetch("/communitymessage", {
+    method: "POST",
+    body: formData
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.post) {
+      const newPost = document.createElement('div');
+      newPost.style.cssText = "background-color: #f1f1f1; padding: 15px; margin: 10px 0; border-radius: 10px;";
+      let mediaHtml = "";
+      if (data.post.media_type === "image") {
+        mediaHtml = `<img src="${data.post.media}" style="max-width: 100%; border-radius: 10px;" />`;
+      } else if (data.post.media_type === "audio") {
+        mediaHtml = `<audio controls style="max-width: 100%;"><source src="${data.post.media}" type="audio/mpeg"></audio>`;
+      } else if (data.post.media_type === "video") {
+        mediaHtml = `<video controls style="max-width: 100%;"><source src="${data.post.media}" type="video/mp4"></video>`;
+      }
+
+      newPost.innerHTML = `
+        <p><strong>${data.post.name}</strong> <span style="font-size: 12px; color: #555;">${data.post.timestamp}</span></p>
+        <p>${data.post.message}</p>
+        ${mediaHtml}
+        <div class="post-reactions" style="margin-top: 10px; display: flex; gap: 10px;">
+          <button type="button" onclick="reactToPost(${data.post.id}, 'like')">👍 Like (0)</button>
+          <button type="button" onclick="reactToPost(${data.post.id}, 'love')">❤️ Love (0)</button>
+          <button type="button" onclick="reactToPost(${data.post.id}, 'haha')">😂 Haha (0)</button>
+          <button onclick="toggleCommentSection(${data.post.id})" style="background-color: #f1f1f1; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">💬 Comment</button>
+        </div>
+        <div id="comment-section-${data.post.id}" style="display: none; margin-top: 10px;">
+          <form id="comment-form-${data.post.id}" method="post" style="display: flex; gap: 10px; align-items: center;">
+            <input type="text" name="name" value="${data.post.name}" readonly />
+            <textarea name="comment" placeholder="Write a comment..." required></textarea>
+            <button type="button" onclick="postComment(${data.post.id})">Post</button>
+          </form>
+          <div id="comment-container-${data.post.id}"></div>
+        </div>
+      `;
+      document.getElementById("post-container").prepend(newPost);
+      this.reset();
+    } else {
+      alert("Error posting your message.");
+    }
+  })
+  .catch(error => console.error("Error:", error));
+});
+</script>
+
+{% endblock %}
