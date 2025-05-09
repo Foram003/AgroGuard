@@ -38,4 +38,7 @@ wrapt>=1.14.1
 xgboost>=1.7.0
 flask-cors>=3.1.1
 flask-restful>=0.3.9
-lime
+keras>=2.15.0
+requests>=2.31.0
+mysql-connector-python>=8.0.33
+lime>=0.2.0.1
